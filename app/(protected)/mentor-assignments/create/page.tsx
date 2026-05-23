@@ -10,7 +10,6 @@ import { Card, CardBody } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
-import { Textarea } from '@/components/ui/Textarea';
 import { AccessDeniedState } from '@/components/shared/states';
 import { apiFetch } from '@/lib/api/api-client';
 import { usePermission } from '@/hooks/use-permission';
@@ -27,8 +26,6 @@ export default function CreateMentorAssignmentPage() {
   const [kidProfileId, setKidProfileId] = useState('');
   const [mentorProfileId, setMentorProfileId] = useState('');
   const [skillId, setSkillId] = useState('');
-  const [reason, setReason] = useState('');
-  const [notes, setNotes] = useState('');
 
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
@@ -49,10 +46,6 @@ export default function CreateMentorAssignmentPage() {
       setError('Kid profile ID and mentor profile ID are required.');
       return;
     }
-    if (reason.trim().length < 3) {
-      setError('Please provide a reason (at least 3 characters).');
-      return;
-    }
     setPending(true);
     try {
       const res = await apiFetch<CreateResponse>('/admin/mentor-assignments', {
@@ -61,8 +54,6 @@ export default function CreateMentorAssignmentPage() {
           kidProfileId: kidProfileId.trim(),
           mentorProfileId: mentorProfileId.trim(),
           skillId: skillId.trim() || undefined,
-          reason: reason.trim(),
-          notes: notes.trim() || undefined,
         },
       });
       await queryClient.invalidateQueries({ queryKey: ['mentor-assignments'] });
@@ -153,29 +144,6 @@ export default function CreateMentorAssignmentPage() {
                   value={skillId}
                   onChange={(event) => setSkillId(event.target.value)}
                   placeholder="Optional — paste a skill ID"
-                  className="mt-1"
-                />
-              </div>
-              <div>
-                <Label htmlFor="reason">Reason</Label>
-                <Textarea
-                  id="reason"
-                  value={reason}
-                  onChange={(event) => setReason(event.target.value)}
-                  placeholder="Explain why this mentor is being assigned (required)."
-                  rows={3}
-                  className="mt-1"
-                  required
-                />
-              </div>
-              <div>
-                <Label htmlFor="notes">Internal notes (optional)</Label>
-                <Textarea
-                  id="notes"
-                  value={notes}
-                  onChange={(event) => setNotes(event.target.value)}
-                  placeholder="Notes visible to other admins only."
-                  rows={3}
                   className="mt-1"
                 />
               </div>
