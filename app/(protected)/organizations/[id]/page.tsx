@@ -220,7 +220,10 @@ export default async function OrganizationDetailPage({ params }: PageProps) {
                 <CardTitle>Actions</CardTitle>
               </CardHeader>
               <CardBody>
-                <OrganizationActions id={detail.id} />
+                <OrganizationActions
+                  id={detail.id}
+                  status={detail.verificationStatus}
+                />
               </CardBody>
             </Card>
           </div>
