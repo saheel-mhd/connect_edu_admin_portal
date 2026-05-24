@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Sparkles } from 'lucide-react';
@@ -9,7 +9,18 @@ import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 import { Card, CardBody } from '@/components/ui/Card';
 
+// Next.js 14 requires `useSearchParams` to live under a Suspense boundary
+// or the page won't prerender. Wrap the form in Suspense; the outer page
+// renders the card chrome so users see something while the URL parses.
 export default function LoginPage() {
+  return (
+    <Suspense fallback={<LoginCardSkeleton />}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
   const params = useSearchParams();
   const nextUrl = params.get('next') || '/dashboard';
@@ -101,6 +112,17 @@ export default function LoginPage() {
             Forgot your password?
           </Link>
         </div>
+      </CardBody>
+    </Card>
+  );
+}
+
+function LoginCardSkeleton() {
+  return (
+    <Card className="shadow-md">
+      <CardBody className="space-y-6">
+        <div className="h-5 w-40 animate-pulse rounded bg-slate-200" />
+        <div className="h-32 animate-pulse rounded bg-slate-100" />
       </CardBody>
     </Card>
   );

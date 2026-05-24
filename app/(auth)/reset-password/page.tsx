@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import Link from 'next/link';
 import { useSearchParams } from 'next/navigation';
 import { Button } from '@/components/ui/Button';
@@ -8,7 +8,24 @@ import { Card, CardBody } from '@/components/ui/Card';
 import { Input } from '@/components/ui/Input';
 import { Label } from '@/components/ui/Label';
 
+// Wrap `useSearchParams` in Suspense so Next.js can prerender the shell.
 export default function ResetPasswordPage() {
+  return (
+    <Suspense
+      fallback={
+        <Card>
+          <CardBody>
+            <div className="h-32 animate-pulse rounded bg-slate-100" />
+          </CardBody>
+        </Card>
+      }
+    >
+      <ResetPasswordForm />
+    </Suspense>
+  );
+}
+
+function ResetPasswordForm() {
   const params = useSearchParams();
   const [token, setToken] = useState(params.get('token') || '');
   const [newPassword, setNewPassword] = useState('');
